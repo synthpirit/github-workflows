@@ -1,0 +1,16 @@
+name: Test
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    steps:
+      - env:
+          ROOT_PATH: "src"
+
+        run: |
+          echo $ROOT_PATH
