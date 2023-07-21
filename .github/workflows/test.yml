@@ -25,3 +25,4 @@ jobs:
           echo "${{ env}}"  
           echo "${{ env.action_state }}" # This will output 'yellow'
           echo "$action_state"
+          ls -alh
