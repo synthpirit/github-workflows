@@ -23,7 +23,7 @@ jobs:
         id: step_two
         run: |
           echo "${{ env.GITHUB_SHA }}"
-          echo "${GITHUB_SHA}"
+          echo ${GITHUB_SHA} | cut -c1-8
           echo "${{ env }}"  
           echo "${{ env.action_state }}" # This will output 'yellow'
           echo "$action_state"
