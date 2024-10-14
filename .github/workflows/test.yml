@@ -10,22 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up cache directory
-        id: cache-dir
-        run: echo "KUBECTL_CACHE_DIR=/tmp" >> $GITHUB_ENV
+        run: echo "kubectl" > .kubectl-cache
 
       - name: Cache kubectl client
-        uses: actions/cache@v3
+        uses: actions/cache@v2
         with:
-          path: ${{ env.KUBECTL_CACHE_DIR }}
-          key: kubectl-v1.22.0
+          path: .kubectl-cache
+          key: ${{ runner.os }}-kubectl-${{ hashFiles('.kubectl-cache') }}
+          restore-keys: |
+            ${{ runner.os }}-kubectl-
 
-      - name: Download kubectl client if not cached
+      - name: Download kubectl client
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          if [ ! -f $KUBECTL_CACHE_DIR/kubectl ]; then
-            curl -LO "https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl"
-            chmod +x kubectl
-            mv kubectl $KUBECTL_CACHE_DIR/
-          fi
+          curl -LO "https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          echo "kubectl" > .kubectl-cache
 
-      - name: Move kubectl to /usr/local/bin
-        run: sudo mv $KUBECTL_CACHE_DIR/kubectl /usr/local/bin/
+      - name: Verify kubectl installation
+        run: kubectl version --client
