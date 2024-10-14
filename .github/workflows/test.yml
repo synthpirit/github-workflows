@@ -5,27 +5,27 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - env:
-          ROOT_PATH: "src"
+      - name: Set up cache directory
+        id: cache-dir
+        run: echo "KUBECTL_CACHE_DIR=/tmp/kubectl-cache" >> $GITHUB_ENV
 
+      - name: Cache kubectl client
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.KUBECTL_CACHE_DIR }}
+          key: kubectl-v1.22.0
+
+      - name: Download kubectl client if not cached
         run: |
-          echo $ROOT_PATH
-      - name: Set the value
-        id: step_one
-        run: |
-          echo "action_state=yellow" >> "$GITHUB_ENV"
-      - name: Use the value
-        id: step_two
-        run: |
-          echo "${{ env.GITHUB_SHA }}"
-          short_sha=`echo ${GITHUB_SHA} | cut -c1-8`
-          echo "$short_sha"
-          echo "${{ env }}"  
-          echo "${{ env.action_state }}" # This will output 'yellow'
-          echo "$action_state"
-          ls -alh
+          if [ ! -f $KUBECTL_CACHE_DIR/kubectl ]; then
+            curl -LO "https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            mv kubectl $KUBECTL_CACHE_DIR/
+          fi
+
+      - name: Move kubectl to /usr/local/bin
+        run: sudo mv $KUBECTL_CACHE_DIR/kubectl /usr/local/bin/
