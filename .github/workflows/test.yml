@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Set up cache directory
         id: cache-dir
-        run: echo "KUBECTL_CACHE_DIR=/tmp/kubectl-cache" >> $GITHUB_ENV
+        run: echo "KUBECTL_CACHE_DIR=/tmp" >> $GITHUB_ENV
 
       - name: Cache kubectl client
         uses: actions/cache@v3
