@@ -26,8 +26,8 @@ jobs:
       - name: Download kubectl client
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          curl -LO "https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl"
-          chmod +x kubectl
+          curl -LO "https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl" -o ~/kubectl
+          chmod +x ~/kubectl
           sudo mv kubectl /usr/local/bin/
           echo "kubectl" > .kubectl-cache
 
