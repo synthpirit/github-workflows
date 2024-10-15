@@ -9,16 +9,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up cache directory
-        run: echo "kubectl" > .kubectl-cache
-
       - name: Cache kubectl client
         uses: actions/cache@v2
+        id: cache
         with:
-          path: .kubectl-cache
-          key: ${{ runner.os }}-kubectl-${{ hashFiles('.kubectl-cache') }}
+          path: ./kubectl
+          key: ${{ runner.os }}-kubectl-${{ hashFiles('./kubectl') }}
           restore-keys: |
-            ${{ runner.os }}-kubectl-
+            ${{ runner.os }}-kubectl
 
       - name: Download kubectl client
         if: steps.cache.outputs.cache-hit != 'true'
