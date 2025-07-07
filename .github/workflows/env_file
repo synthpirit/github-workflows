@@ -1,0 +1,31 @@
+name: Custom PATH Prepend Demo
+
+on:
+  workflow_dispatch:  # 支持手动触发
+  push:
+    paths:
+      - .github/workflows/path-priority.yml
+
+jobs:
+  test-path-priority:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (optional)
+        uses: actions/checkout@v4
+
+      - name: Create custom tool directory and mock tool
+        run: |
+          mkdir -p /tmp/custom-bin
+          echo -e '#!/bin/bash\necho \"✅ custom ls used\"' > /tmp/custom-bin/ls
+          chmod +x /tmp/custom-bin/ls
+
+      - name: Prepend /tmp/custom-bin to PATH (highest priority)
+        run: |
+          echo "/tmp/custom-bin" >> $GITHUB_PATH
+
+      - name: Confirm custom bin is in PATH and takes priority
+        run: |
+          echo "PATH is: $PATH"
+          which ls
+          ls
